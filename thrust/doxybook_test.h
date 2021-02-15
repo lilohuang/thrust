@@ -38,9 +38,11 @@ template <typename T, typename U>
 struct test_class
 {
   template <typename Z>
-  struct nested_class {};
+  struct test_nested_class {};
 
-  [[deprecated]] constexpr int i = 0; ///< A test variable.
+  int test_member_variable = 0; ///< A test member variable.
+
+  [[deprecated]] constexpr int test_member_constant = 42; ///< A test member constant.
 
   template <typename X, typename Y>
   using other = test_class<X, Y>;
@@ -56,30 +58,42 @@ struct test_class
   __host__ __device__ constexpr
   test_class();
 
-  /*! \brief A member function.
-   *
-   * \see device_new
-   */
   __host__ __device__ constexpr
   int test_member_function();
 
   template <typename Z>
-  friend void friend_function();
+  friend void test_friend_function();
 
   template <typename Z>
-  friend struct friend_class;
+  friend struct test_friend_class;
 };
 
 /*! \brief \c test_function is a function intended to exercise and test Doxybook
  *  rendering.
  */
 template <typename T>
-void test_function();
+void test_function(T const& a, test_class<T, T const>&& b);
+
+/*! \brief \c test_namespace is a namespace intended to exercise and test
+ *  Doxybook rendering.
+ */
+namespace test_namespace {
+
+inline constexpr int test_constant = 12; 
+
+/*! \brief \c nested_function is a function intended to exercise and test
+ *  Doxybook rendering.
+ */
+template <typename T, typename U>
+auto test_nested_function(T t, U u) noexcept(noexcept(t + u)) -> decltype(t + u)
+{ return t + u; }
+ 
+} // namespace test_namespace
 
 /*! \brief \c THRUST_TEST_MACRO is a macro intended to exercise and test
  *  Doxybook rendering.
  */
-#define THRUST_TEST_MACRO(x) test_function()
+#define THRUST_TEST_MACRO(x, y) thrust::test_namespace::nested_function(x, y)
 
 /*! \} // test 
  */
